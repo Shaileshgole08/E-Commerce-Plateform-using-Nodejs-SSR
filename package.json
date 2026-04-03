@@ -1,0 +1,26 @@
+{
+  "name": "e-commerce-plateform-using-nodejs-ssr",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r   <img src=\"https://readme-typing-svg.herokuapp.com?color=36BCF7&size=28&center=true&vCenter=true&width=600&lines=Full+Stack+E-Commerce+App;Node.js+%7C+Express+%7C+MongoDB;SSR+with+EJS;Fast+%26+Dynamic+Web+Experience\" />\r </p>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR/issues"
+  },
+  "homepage": "https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR#readme",
+  "dependencies": {
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3"
+  }
+}
