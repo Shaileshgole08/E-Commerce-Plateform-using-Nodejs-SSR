@@ -1,0 +1,186 @@
+<% layout('layout/boilerplate') %>
+
+<div class="admin-layout">
+    <%- include('./admin-sidebar') %>
+    
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1><i class="fas fa-plus-circle"></i> Add New Product</h1>
+            <a href="/admin/products" class="btn-outline-gold">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+        </div>
+
+        <div class="admin-card product-form-card">
+            <form action="/admin/products" method="POST" enctype="multipart/form-data" id="productForm">
+                <div class="form-grid-2">
+                    <!-- Left Column -->
+                    <div class="form-col">
+                        <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Basic Info</h3>
+
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" name="name" class="form-input" placeholder="e.g. Luxury Leather Handbag" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description *</label>
+                            <textarea name="description" class="form-input form-textarea" rows="5"
+                                      placeholder="Describe the product in detail..." required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Selling Price (₹) *</label>
+                                <input type="number" name="price" class="form-input" placeholder="0" min="0" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Original Price (₹)</label>
+                                <input type="number" name="originalPrice" class="form-input" placeholder="0 (for discount)" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select name="category" class="form-input form-select" required>
+                                    <option value="">Select Category</option>
+                                    <% categories.forEach(cat => { %>
+                                        <option value="<%= cat %>"><%= cat %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Quantity *</label>
+                                <input type="number" name="stock" class="form-input" placeholder="0" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Brand</label>
+                                <input type="text" name="brand" class="form-input" placeholder="Raju Bag House" value="Raju Bag House">
+                            </div>
+                            <div class="form-group">
+                                <label>Material</label>
+                                <input type="text" name="material" class="form-input" placeholder="e.g. Genuine Leather">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Available Colors <small>(comma separated)</small></label>
+                            <input type="text" name="colors" class="form-input" placeholder="e.g. Black, Brown, Beige, Red">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Available Sizes <small>(comma separated)</small></label>
+                            <input type="text" name="sizes" class="form-input" placeholder="e.g. Small, Medium, Large">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tags <small>(comma separated, for search)</small></label>
+                            <input type="text" name="tags" class="form-input" placeholder="e.g. handbag, leather, ladies">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="isFeatured" class="checkbox-input">
+                                <span class="checkbox-custom"></span>
+                                <span>Feature this product on homepage</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="form-col">
+                        <h3 class="form-section-title"><i class="fas fa-images"></i> Product Images</h3>
+                        
+                        <div class="image-upload-zone" id="imageUploadZone">
+                            <input type="file" name="images" id="imageInput" multiple accept="image/*"
+                                   class="file-input" onchange="previewImages(this)">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop images or <span class="click-link">click to browse</span></p>
+                                <small>PNG, JPG, WEBP — Max 5MB each — Up to 5 images</small>
+                            </div>
+                            <div class="image-previews" id="imagePreviews"></div>
+                        </div>
+                        
+                        <div class="form-preview-note">
+                            <i class="fas fa-info-circle"></i>
+                            First image will be the main product image.
+                        </div>
+
+                        <div class="product-form-summary" id="productSummary">
+                            <h4>Live Preview</h4>
+                            <div class="preview-card">
+                                <div class="preview-img-wrap">
+                                    <img src="/images/bag-placeholder.svg" id="previewMainImg" alt="Preview">
+                                </div>
+                                <div class="preview-info">
+                                    <div class="preview-name" id="previewName">Product Name</div>
+                                    <div class="preview-price" id="previewPrice">₹0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/admin/products" class="btn-outline-gold">Cancel</a>
+                    <button type="submit" class="btn-gold">
+                        <i class="fas fa-save"></i> Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImages(input) {
+    const previews = document.getElementById('imagePreviews');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    previews.innerHTML = '';
+    
+    if (input.files.length > 0) {
+        placeholder.style.display = 'none';
+        Array.from(input.files).forEach((file, i) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `<img src="${e.target.result}" alt="Preview ${i+1}">
+                    ${i === 0 ? '<span class="main-badge">Main</span>' : ''}`;
+                previews.appendChild(div);
+                if (i === 0) document.getElementById('previewMainImg').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        placeholder.style.display = 'flex';
+    }
+}
+
+// Live preview for name & price
+document.querySelector('[name="name"]').addEventListener('input', function() {
+    document.getElementById('previewName').textContent = this.value || 'Product Name';
+});
+document.querySelector('[name="price"]').addEventListener('input', function() {
+    const p = parseInt(this.value) || 0;
+    document.getElementById('previewPrice').textContent = '₹' + p.toLocaleString('en-IN');
+});
+
+// Drag & Drop
+const zone = document.getElementById('imageUploadZone');
+const input = document.getElementById('imageInput');
+zone.addEventListener('click', () => input.click());
+zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    input.files = e.dataTransfer.files;
+    previewImages(input);
+});
+</script>

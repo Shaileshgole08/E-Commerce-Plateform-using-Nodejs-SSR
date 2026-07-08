@@ -1,0 +1,12 @@
+const fs = require('fs');
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#1e1e1e"/>
+  <rect x="130" y="120" width="140" height="170" rx="14" fill="#2a2a2a" stroke="#c9a84c" stroke-width="2"/>
+  <path d="M160 120 Q160 80 200 80 Q240 80 240 120" fill="none" stroke="#c9a84c" stroke-width="2.5"/>
+  <rect x="185" y="80" width="30" height="12" rx="4" fill="#c9a84c"/>
+  <line x1="130" y1="175" x2="270" y2="175" stroke="#3a3a3a" stroke-width="1.5"/>
+  <circle cx="200" cy="215" r="10" fill="#333" stroke="#c9a84c" stroke-width="1.5"/>
+  <text x="200" y="330" text-anchor="middle" fill="#555" font-family="Arial,sans-serif" font-size="14" font-weight="500">No Image Available</text>
+</svg>`;
+fs.writeFileSync('public/images/bag-placeholder.svg', svg);
+console.log('Placeholder created');

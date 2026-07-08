@@ -1,0 +1,107 @@
+<% layout('layout/boilerplate') %>
+
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-box"></i> My Orders</h1>
+        <div class="breadcrumb">
+            <a href="/">Home</a> <i class="fas fa-chevron-right"></i> <span>Orders</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <% if (!orders || orders.length === 0) { %>
+        <div class="empty-state">
+            <i class="fas fa-box empty-icon"></i>
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders. Start shopping!</p>
+            <a href="/products" class="btn-gold mt-3">
+                <i class="fas fa-shopping-bag"></i> Shop Now
+            </a>
+        </div>
+    <% } else { %>
+        <div class="orders-list">
+            <% orders.forEach((order, i) => { %>
+                <div class="order-card animate-fade-in-up" style="animation-delay:<%= i * 0.07 %>s">
+                    <div class="order-header">
+                        <div class="order-header-left">
+                            <div class="order-number">Order #<%= order.orderNumber %></div>
+                            <div class="order-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <%= new Date(order.createdAt).toLocaleDateString('en-IN', { 
+                                    day: 'numeric', month: 'long', year: 'numeric' 
+                                }) %>
+                            </div>
+                        </div>
+                        <div class="order-header-right">
+                            <span class="order-status status-<%= order.status.toLowerCase() %>">
+                                <% const statusIcons = {
+                                    'Pending': 'fas fa-clock',
+                                    'Confirmed': 'fas fa-check',
+                                    'Processing': 'fas fa-cog fa-spin',
+                                    'Shipped': 'fas fa-truck',
+                                    'Delivered': 'fas fa-check-double',
+                                    'Cancelled': 'fas fa-times'
+                                }; %>
+                                <i class="<%= statusIcons[order.status] || 'fas fa-circle' %>"></i>
+                                <%= order.status %>
+                            </span>
+                            <div class="order-total">₹<%= order.total.toLocaleString('en-IN') %></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Items -->
+                    <div class="order-items">
+                        <% order.items.forEach(item => { %>
+                            <div class="order-item">
+                                <img src="<%= item.image || '/images/bag-placeholder.svg' %>" 
+                                     alt="<%= item.name %>" class="order-item-img">
+                                <div class="order-item-info">
+                                    <div class="order-item-name"><%= item.name %></div>
+                                    <div class="order-item-meta">Qty: <%= item.quantity %> × ₹<%= item.price.toLocaleString('en-IN') %></div>
+                                </div>
+                                <div class="order-item-price">
+                                    ₹<%= (item.price * item.quantity).toLocaleString('en-IN') %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+
+                    <!-- Delivery Info -->
+                    <div class="order-footer">
+                        <div class="order-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <%= order.shippingAddress.name %>, 
+                            <%= order.shippingAddress.street %>, 
+                            <%= order.shippingAddress.city %> — <%= order.shippingAddress.pincode %>
+                        </div>
+                        <div class="order-payment">
+                            <i class="fas fa-<%= order.paymentMethod === 'COD' ? 'money-bill-wave' : 'credit-card' %>"></i>
+                            <%= order.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Online Payment' %>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="order-progress">
+                        <% const statuses = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered'];
+                           const currentIdx = statuses.indexOf(order.status);
+                        %>
+                        <% if (order.status !== 'Cancelled') { %>
+                            <% statuses.forEach((s, idx) => { %>
+                                <div class="progress-step <%= idx <= currentIdx ? 'completed' : '' %>">
+                                    <div class="progress-dot"></div>
+                                    <span><%= s %></span>
+                                </div>
+                                <% if (idx < statuses.length - 1) { %>
+                                    <div class="progress-line <%= idx < currentIdx ? 'completed' : '' %>"></div>
+                                <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="order-cancelled-msg"><i class="fas fa-times-circle"></i> This order was cancelled</div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+</div>

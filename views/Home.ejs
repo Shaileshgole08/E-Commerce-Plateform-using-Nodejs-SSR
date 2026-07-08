@@ -1,0 +1,339 @@
+<% layout('layout/boilerplate') %>
+
+<!-- ====== HERO SECTION ====== -->
+<section class="hero">
+    <div class="hero-particles" id="particles"></div>
+    <div class="hero-content">
+        <div class="hero-badge animate-fade-in-up" style="animation-delay:0.1s">
+            <i class="fas fa-star"></i> Premium Quality Bags
+        </div>
+        <h1 class="hero-title animate-fade-in-up" style="animation-delay:0.2s">
+            Carry Your <span class="text-gold">Style</span> <br>Everywhere You Go
+        </h1>
+        <p class="hero-subtitle animate-fade-in-up" style="animation-delay:0.3s">
+            Discover our exclusive collection of premium bags — crafted for elegance, built for life.
+        </p>
+        <div class="hero-actions animate-fade-in-up" style="animation-delay:0.4s">
+            <a href="/products" class="btn-gold btn-lg">
+                <i class="fas fa-shopping-bag"></i> Shop Now
+            </a>
+            <a href="/products?category=Handbags" class="btn-outline-gold btn-lg">
+                Explore Collection
+            </a>
+        </div>
+        <div class="hero-stats animate-fade-in-up" style="animation-delay:0.5s">
+            <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Products</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">10K+</span><span class="stat-label">Happy Customers</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Genuine</span></div>
+        </div>
+    </div>
+    <div class="hero-visual animate-slide-in-right">
+        <div class="hero-bag-showcase">
+            <div class="floating-bag bag-1"><i class="fas fa-shopping-bag"></i></div>
+            <div class="floating-bag bag-2"><i class="fas fa-suitcase"></i></div>
+            <div class="floating-bag bag-3"><i class="fas fa-briefcase"></i></div>
+            <div class="hero-glow-ring"></div>
+        </div>
+    </div>
+    <div class="hero-scroll-hint">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
+
+<!-- ====== CATEGORIES SECTION ====== -->
+<section class="section categories-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Browse By</span>
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-subtitle">Find the perfect bag for every occasion</p>
+        </div>
+        <div class="categories-grid">
+            <% const catIcons = {
+                'Handbags': 'fas fa-shopping-bag',
+                'Backpacks': 'fas fa-backpack',
+                'Clutches': 'fas fa-wallet',
+                'Tote Bags': 'fas fa-shopping-basket',
+                'Shoulder Bags': 'fas fa-suitcase',
+                'Travel Bags': 'fas fa-plane-departure'
+            }; %>
+            <% categories.forEach((cat, i) => { %>
+                <a href="/products?category=<%= cat %>" class="category-card animate-fade-in-up"
+                   style="animation-delay:<%= i * 0.08 %>s">
+                    <div class="cat-icon">
+                        <i class="<%= catIcons[cat] || 'fas fa-shopping-bag' %>"></i>
+                    </div>
+                    <span class="cat-name"><%= cat %></span>
+                    <div class="cat-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+            <% }) %>
+        </div>
+    </div>
+</section>
+
+<!-- ====== FEATURED PRODUCTS ====== -->
+<% if (featured && featured.length > 0) { %>
+<section class="section products-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Handpicked</span>
+            <h2 class="section-title">Featured Collection</h2>
+            <p class="section-subtitle">Our most loved and bestselling pieces</p>
+        </div>
+        <div class="products-grid">
+            <% featured.forEach((product, i) => { %>
+                <div class="product-card animate-fade-in-up" style="animation-delay:<%= i * 0.07 %>s">
+                    <div class="product-img-wrap">
+                        <a href="/products/<%= product._id %>">
+                            <img src="<%= product.images[0] || '/images/bag-placeholder.svg' %>" 
+                                 alt="<%= product.name %>" class="product-img" loading="lazy">
+                        </a>
+                        <% if (product.discount > 0) { %>
+                            <span class="badge-discount">-<%= product.discount %>%</span>
+                        <% } %>
+                        <% if (product.stock === 0) { %>
+                            <span class="badge-outofstock">Out of Stock</span>
+                        <% } %>
+                        <a href="/products/<%= product._id %>" class="quick-view-btn">
+                            <i class="fas fa-eye"></i> Quick View
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-cat"><%= product.category %></span>
+                        <h3 class="product-name">
+                            <a href="/products/<%= product._id %>"><%= product.name %></a>
+                        </h3>
+                        <div class="product-rating">
+                            <% for(let s=1; s<=5; s++) { %>
+                                <i class="fas fa-star <%= s <= Math.round(product.ratings.average) ? 'star-active' : 'star-empty' %>"></i>
+                            <% } %>
+                            <span class="rating-count">(<%= product.ratings.count %>)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price-current">₹<%= product.price.toLocaleString('en-IN') %></span>
+                            <% if (product.originalPrice > product.price) { %>
+                                <span class="price-original">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+                            <% } %>
+                        </div>
+                        <div class="product-stock-info">
+                            <% if (product.stock === 0) { %>
+                                <span class="stock-out"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                            <% } else if (product.stock < 5) { %>
+                                <span class="stock-low"><i class="fas fa-exclamation-circle"></i> Only <%= product.stock %> left!</span>
+                            <% } else { %>
+                                <span class="stock-ok"><i class="fas fa-check-circle"></i> In Stock</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="product-actions">
+                        <% if (product.stock > 0) { %>
+                            <% if (currentUser) { %>
+                                <form action="/cart/<%= product._id %>" method="POST" class="card-action-form">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                                <form action="/orders/buy-now/<%= product._id %>" method="POST" class="card-action-form">
+                                    <button type="submit" class="btn-buy-now">
+                                        <i class="fas fa-bolt"></i> Buy Now
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <a href="/auth/login" class="btn-add-cart">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </a>
+                                <a href="/auth/login" class="btn-buy-now">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </a>
+                            <% } %>
+                        <% } else { %>
+                            <button class="btn-out-of-stock" disabled>
+                                <i class="fas fa-ban"></i> Out of Stock
+                            </button>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        <div class="section-cta">
+            <a href="/products" class="btn-gold">View All Products <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- ====== NEW ARRIVALS ====== -->
+<% if (newArrivals && newArrivals.length > 0) { %>
+<section class="section products-section bg-section-dark">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Just In</span>
+            <h2 class="section-title">New Arrivals</h2>
+            <p class="section-subtitle">Fresh styles added to the collection</p>
+        </div>
+        <div class="products-grid">
+            <% newArrivals.forEach((product, i) => { %>
+                <div class="product-card animate-fade-in-up" style="animation-delay:<%= i * 0.07 %>s">
+                    <div class="product-img-wrap">
+                        <a href="/products/<%= product._id %>">
+                            <img src="<%= product.images[0] || '/images/bag-placeholder.svg' %>" 
+                                 alt="<%= product.name %>" class="product-img" loading="lazy">
+                        </a>
+                        <span class="badge-new">New</span>
+                        <a href="/products/<%= product._id %>" class="quick-view-btn">
+                            <i class="fas fa-eye"></i> Quick View
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-cat"><%= product.category %></span>
+                        <h3 class="product-name">
+                            <a href="/products/<%= product._id %>"><%= product.name %></a>
+                        </h3>
+                        <div class="product-rating">
+                            <% for(let s=1; s<=5; s++) { %>
+                                <i class="fas fa-star <%= s <= Math.round(product.ratings.average || 5) ? 'star-active' : 'star-empty' %>"></i>
+                            <% } %>
+                            <span class="rating-count">(<%= product.ratings ? product.ratings.count : 0 %>)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price-current">₹<%= product.price.toLocaleString('en-IN') %></span>
+                            <% if (product.originalPrice > product.price) { %>
+                                <span class="price-original">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+                            <% } %>
+                        </div>
+                        <div class="product-stock-info">
+                            <% if (product.stock === 0) { %>
+                                <span class="stock-out"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                            <% } else if (product.stock < 5) { %>
+                                <span class="stock-low"><i class="fas fa-exclamation-circle"></i> Only <%= product.stock %> left!</span>
+                            <% } else { %>
+                                <span class="stock-ok"><i class="fas fa-check-circle"></i> In Stock</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="product-actions">
+                        <% if (product.stock > 0) { %>
+                            <% if (currentUser) { %>
+                                <form action="/cart/<%= product._id %>" method="POST" class="card-action-form">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                                <form action="/orders/buy-now/<%= product._id %>" method="POST" class="card-action-form">
+                                    <button type="submit" class="btn-buy-now">
+                                        <i class="fas fa-bolt"></i> Buy Now
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <a href="/auth/login" class="btn-add-cart">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </a>
+                                <a href="/auth/login" class="btn-buy-now">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </a>
+                            <% } %>
+                        <% } else { %>
+                            <button class="btn-out-of-stock" disabled>
+                                <i class="fas fa-ban"></i> Out of Stock
+                            </button>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- ====== FEATURES BANNER ====== -->
+<section class="features-banner">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-truck"></i></div>
+                <div class="feature-text">
+                    <h4>Free Shipping</h4>
+                    <p>On orders above ₹999</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="feature-text">
+                    <h4>100% Genuine</h4>
+                    <p>Authentic quality products</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-undo"></i></div>
+                <div class="feature-text">
+                    <h4>Easy Returns</h4>
+                    <p>7-day hassle-free returns</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                <div class="feature-text">
+                    <h4>24/7 Support</h4>
+                    <p>We're here to help you</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== TESTIMONIALS ====== -->
+<section class="section testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Reviews</span>
+            <h2 class="section-title">What Our Customers Say</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card animate-fade-in-up" style="animation-delay:0.1s">
+                <div class="testimonial-stars">
+                    <% for(let i=0;i<5;i++) { %><i class="fas fa-star star-active"></i><% } %>
+                </div>
+                <p>"Absolutely love my new handbag! The quality is outstanding and the delivery was super fast. Will definitely order again!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">P</div>
+                    <div><strong>Priya Sharma</strong><small>Mumbai</small></div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-fade-in-up" style="animation-delay:0.2s">
+                <div class="testimonial-stars">
+                    <% for(let i=0;i<5;i++) { %><i class="fas fa-star star-active"></i><% } %>
+                </div>
+                <p>"Best bags at the best prices! The backpack I ordered is so spacious and stylish. My colleagues keep asking where I got it."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">R</div>
+                    <div><strong>Rahul Patel</strong><small>Ahmedabad</small></div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-fade-in-up" style="animation-delay:0.3s">
+                <div class="testimonial-stars">
+                    <% for(let i=0;i<5;i++) { %><i class="fas fa-star star-active"></i><% } %>
+                </div>
+                <p>"Ordered a clutch for a wedding and it was perfect! Great packaging, genuine product, and the price is unbeatable."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">A</div>
+                    <div><strong>Anjali Mehta</strong><small>Pune</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CTA BANNER ====== -->
+<section class="cta-banner">
+    <div class="cta-content">
+        <h2>Ready to Find Your <span class="text-gold">Perfect Bag?</span></h2>
+        <p>Browse our full collection of premium bags for every style and occasion.</p>
+        <a href="/products" class="btn-gold btn-lg">
+            <i class="fas fa-shopping-bag"></i> Shop the Collection
+        </a>
+    </div>
+</section>

@@ -1,0 +1,190 @@
+<% layout('layout/boilerplate') %>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-shopping-bag"></i> Shop Our Collection</h1>
+        <div class="breadcrumb">
+            <a href="/">Home</a> <i class="fas fa-chevron-right"></i> <span>Shop</span>
+        </div>
+    </div>
+</div>
+
+<div class="container shop-container">
+    <div class="shop-layout">
+        <!-- ====== SIDEBAR FILTERS ====== -->
+        <aside class="filter-sidebar" id="filterSidebar">
+            <div class="filter-header">
+                <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+                <a href="/products" class="clear-filters">Clear All</a>
+            </div>
+
+            <form action="/products" method="GET" id="filterForm">
+                <input type="hidden" name="search" value="<%= search %>">
+
+                <!-- Category Filter -->
+                <div class="filter-section">
+                    <h4 class="filter-title">Category</h4>
+                    <div class="filter-options">
+                        <% categories.forEach(cat => { %>
+                            <label class="filter-option">
+                                <input type="radio" name="category" value="<%= cat %>"
+                                    <%= currentCategory === cat ? 'checked' : '' %>>
+                                <span class="radio-custom"></span>
+                                <span><%= cat %></span>
+                            </label>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div class="filter-section">
+                    <h4 class="filter-title">Price Range</h4>
+                    <div class="price-range">
+                        <div class="price-inputs">
+                            <input type="number" name="minPrice" placeholder="Min ₹"
+                                   value="<%= minPrice %>" class="price-input" min="0">
+                            <span>—</span>
+                            <input type="number" name="maxPrice" placeholder="Max ₹"
+                                   value="<%= maxPrice %>" class="price-input" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-gold btn-full mt-3">Apply Filters</button>
+            </form>
+        </aside>
+
+        <!-- ====== PRODUCTS AREA ====== -->
+        <div class="products-area">
+            <!-- Toolbar -->
+            <div class="shop-toolbar">
+                <div class="results-count">
+                    <strong><%= products.length %></strong> product<%= products.length !== 1 ? 's' : '' %> found
+                    <% if (search) { %> for "<em><%= search %></em>"<% } %>
+                    <% if (currentCategory !== 'All') { %> in <em><%= currentCategory %></em><% } %>
+                </div>
+                <div class="toolbar-right">
+                    <form action="/products" method="GET" class="sort-form">
+                        <input type="hidden" name="search" value="<%= search %>">
+                        <input type="hidden" name="category" value="<%= currentCategory %>">
+                        <input type="hidden" name="minPrice" value="<%= minPrice %>">
+                        <input type="hidden" name="maxPrice" value="<%= maxPrice %>">
+                        <select name="sort" class="sort-select" onchange="this.form.submit()">
+                            <option value="" <%= sort === '' ? 'selected' : '' %>>Newest First</option>
+                            <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Name: A–Z</option>
+                            <option value="rating" <%= sort === 'rating' ? 'selected' : '' %>>Top Rated</option>
+                        </select>
+                    </form>
+                    <button class="filter-toggle-btn" id="filterToggleBtn">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <% if (products.length === 0) { %>
+                <div class="empty-state">
+                    <i class="fas fa-search empty-icon"></i>
+                    <h3>No products found</h3>
+                    <p>Try adjusting your search or filters</p>
+                    <a href="/products" class="btn-gold mt-3">Browse All Products</a>
+                </div>
+            <% } else { %>
+                <div class="products-grid">
+                    <% products.forEach((product, i) => { %>
+                        <div class="product-card animate-fade-in-up" style="animation-delay:<%= i * 0.05 %>s">
+                            <!-- Image -->
+                            <div class="product-img-wrap">
+                                <a href="/products/<%= product._id %>">
+                                    <img src="<%= product.images[0] || '/images/bag-placeholder.svg' %>"
+                                         alt="<%= product.name %>" class="product-img" loading="lazy">
+                                </a>
+                                <% if (product.discount > 0) { %>
+                                    <span class="badge-discount">-<%= product.discount %>%</span>
+                                <% } %>
+                                <% if (product.stock === 0) { %>
+                                    <span class="badge-outofstock">Out of Stock</span>
+                                <% } %>
+                                <% if (product.isFeatured) { %>
+                                    <span class="badge-featured"><i class="fas fa-star"></i></span>
+                                <% } %>
+                                <!-- Quick View -->
+                                <a href="/products/<%= product._id %>" class="quick-view-btn">
+                                    <i class="fas fa-eye"></i> Quick View
+                                </a>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="product-info">
+                                <span class="product-cat"><%= product.category %></span>
+                                <h3 class="product-name">
+                                    <a href="/products/<%= product._id %>"><%= product.name %></a>
+                                </h3>
+                                <div class="product-rating">
+                                    <% for(let s=1; s<=5; s++) { %>
+                                        <i class="fas fa-star <%= s <= Math.round(product.ratings.average) ? 'star-active' : 'star-empty' %>"></i>
+                                    <% } %>
+                                    <span class="rating-count">(<%= product.ratings.count %>)</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-current">₹<%= product.price.toLocaleString('en-IN') %></span>
+                                    <% if (product.originalPrice > product.price) { %>
+                                        <span class="price-original">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+                                    <% } %>
+                                </div>
+                                <div class="product-stock-info">
+                                    <% if (product.stock === 0) { %>
+                                        <span class="stock-out"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                                    <% } else if (product.stock < 5) { %>
+                                        <span class="stock-low"><i class="fas fa-exclamation-circle"></i> Only <%= product.stock %> left!</span>
+                                    <% } else { %>
+                                        <span class="stock-ok"><i class="fas fa-check-circle"></i> In Stock</span>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (always visible) -->
+                            <div class="product-actions">
+                                <% if (product.stock > 0) { %>
+                                    <% if (currentUser) { %>
+                                        <form action="/cart/<%= product._id %>" method="POST" class="card-action-form">
+                                            <button type="submit" class="btn-add-cart">
+                                                <i class="fas fa-cart-plus"></i> Add to Cart
+                                            </button>
+                                        </form>
+                                        <form action="/orders/buy-now/<%= product._id %>" method="POST" class="card-action-form">
+                                            <button type="submit" class="btn-buy-now">
+                                                <i class="fas fa-bolt"></i> Buy Now
+                                            </button>
+                                        </form>
+                                    <% } else { %>
+                                        <a href="/auth/login" class="btn-add-cart">
+                                            <i class="fas fa-cart-plus"></i> Add to Cart
+                                        </a>
+                                        <a href="/auth/login" class="btn-buy-now">
+                                            <i class="fas fa-bolt"></i> Buy Now
+                                        </a>
+                                    <% } %>
+                                <% } else { %>
+                                    <button class="btn-out-of-stock" disabled>
+                                        <i class="fas fa-ban"></i> Out of Stock
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('filterToggleBtn').addEventListener('click', () => {
+    document.getElementById('filterSidebar').classList.toggle('open');
+});
+</script>

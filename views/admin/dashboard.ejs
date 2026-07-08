@@ -1,0 +1,114 @@
+<% layout('layout/boilerplate') %>
+
+<div class="admin-layout">
+    <%- include('./admin-sidebar') %>
+    
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+            <div class="admin-welcome">Welcome back, <strong><%= currentUser.name %></strong> 👋</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card stat-gold animate-fade-in-up" style="animation-delay:0.1s">
+                <div class="stat-card-icon"><i class="fas fa-box"></i></div>
+                <div class="stat-card-info">
+                    <div class="stat-card-num"><%= totalProducts %></div>
+                    <div class="stat-card-label">Total Products</div>
+                </div>
+            </div>
+            <div class="stat-card stat-blue animate-fade-in-up" style="animation-delay:0.2s">
+                <div class="stat-card-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-card-info">
+                    <div class="stat-card-num"><%= totalOrders %></div>
+                    <div class="stat-card-label">Total Orders</div>
+                </div>
+            </div>
+            <div class="stat-card stat-green animate-fade-in-up" style="animation-delay:0.3s">
+                <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-card-info">
+                    <div class="stat-card-num"><%= totalUsers %></div>
+                    <div class="stat-card-label">Customers</div>
+                </div>
+            </div>
+            <div class="stat-card stat-purple animate-fade-in-up" style="animation-delay:0.4s">
+                <div class="stat-card-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-card-info">
+                    <div class="stat-card-num">₹<%= totalRevenue.toLocaleString('en-IN') %></div>
+                    <div class="stat-card-label">Total Revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="quick-action-grid">
+                <a href="/admin/products/new" class="quick-action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+                <a href="/admin/products" class="quick-action-btn">
+                    <i class="fas fa-boxes"></i>
+                    <span>Manage Products</span>
+                </a>
+                <a href="/admin/orders" class="quick-action-btn">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>View Orders</span>
+                </a>
+                <a href="/products" class="quick-action-btn" target="_blank">
+                    <i class="fas fa-store"></i>
+                    <span>View Shop</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3><i class="fas fa-clock"></i> Recent Orders</h3>
+                <a href="/admin/orders" class="btn-outline-gold btn-sm">View All</a>
+            </div>
+            <% if (recentOrders.length === 0) { %>
+                <div class="empty-state-sm">No orders yet.</div>
+            <% } else { %>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% recentOrders.forEach(order => { %>
+                                <tr>
+                                    <td class="order-num"><%= order.orderNumber %></td>
+                                    <td>
+                                        <% if (order.user) { %>
+                                            <div><%= order.user.name %></div>
+                                            <small><%= order.user.email %></small>
+                                        <% } else { %>
+                                            <span class="text-muted">Deleted user</span>
+                                        <% } %>
+                                    </td>
+                                    <td>₹<%= order.total.toLocaleString('en-IN') %></td>
+                                    <td>
+                                        <span class="order-status status-<%= order.status.toLowerCase() %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </td>
+                                    <td><%= new Date(order.createdAt).toLocaleDateString('en-IN') %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

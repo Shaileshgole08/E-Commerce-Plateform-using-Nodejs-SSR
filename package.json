@@ -1,0 +1,34 @@
+{
+  "name": "e-commerce-plateform-using-nodejs-ssr",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r   <img src=\"https://readme-typing-svg.herokuapp.com?color=36BCF7&size=28&center=true&vCenter=true&width=600&lines=Full+Stack+E-Commerce+App;Node.js+%7C+Express+%7C+MongoDB;SSR+with+EJS;Fast+%26+Dynamic+Web+Experience\" />\r </p>",
+  "homepage": "https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR#readme",
+  "bugs": {
+    "url": "https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shaileshgole08/E-Commerce-Plateform-using-Nodejs-SSR.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^6.0.0",
+    "ejs": "^6.0.1",
+    "ejs-mate": "^4.0.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^9.7.3",
+    "multer": "^2.2.0"
+  }
+}

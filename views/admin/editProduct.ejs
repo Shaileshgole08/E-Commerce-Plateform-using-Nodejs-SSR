@@ -1,0 +1,193 @@
+<% layout('layout/boilerplate') %>
+
+<div class="admin-layout">
+    <%- include('./admin-sidebar') %>
+    
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1><i class="fas fa-edit"></i> Edit Product</h1>
+            <a href="/admin/products" class="btn-outline-gold">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+        </div>
+
+        <div class="admin-card product-form-card">
+            <form action="/admin/products/<%= product._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+                <div class="form-grid-2">
+                    <!-- Left Column -->
+                    <div class="form-col">
+                        <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Basic Info</h3>
+
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" name="name" class="form-input" value="<%= product.name %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description *</label>
+                            <textarea name="description" class="form-input form-textarea" rows="5" required><%= product.description %></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Selling Price (₹) *</label>
+                                <input type="number" name="price" class="form-input" value="<%= product.price %>" min="0" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Original Price (₹)</label>
+                                <input type="number" name="originalPrice" class="form-input" value="<%= product.originalPrice %>" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select name="category" class="form-input form-select" required>
+                                    <% categories.forEach(cat => { %>
+                                        <option value="<%= cat %>" <%= product.category === cat ? 'selected' : '' %>>
+                                            <%= cat %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Quantity *</label>
+                                <input type="number" name="stock" class="form-input" value="<%= product.stock %>" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Brand</label>
+                                <input type="text" name="brand" class="form-input" value="<%= product.brand %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Material</label>
+                                <input type="text" name="material" class="form-input" value="<%= product.material %>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Colors <small>(comma separated)</small></label>
+                            <input type="text" name="colors" class="form-input" value="<%= product.colors.join(', ') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sizes <small>(comma separated)</small></label>
+                            <input type="text" name="sizes" class="form-input" value="<%= product.sizes.join(', ') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tags <small>(comma separated)</small></label>
+                            <input type="text" name="tags" class="form-input" value="<%= product.tags.join(', ') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="isFeatured" class="checkbox-input"
+                                       <%= product.isFeatured ? 'checked' : '' %>>
+                                <span class="checkbox-custom"></span>
+                                <span>Feature this product on homepage</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="form-col">
+                        <h3 class="form-section-title"><i class="fas fa-images"></i> Product Images</h3>
+
+                        <!-- Current images -->
+                        <div class="current-images">
+                            <p class="current-img-label">Current Images:</p>
+                            <div class="current-img-grid">
+                                <% product.images.forEach((img, i) => { %>
+                                    <div class="current-img-item">
+                                        <img src="<%= img %>" alt="Product image <%= i+1 %>">
+                                        <% if (i === 0) { %><span class="main-badge">Main</span><% } %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+
+                        <div class="image-upload-zone" id="imageUploadZone">
+                            <input type="file" name="images" id="imageInput" multiple accept="image/*"
+                                   class="file-input" onchange="previewImages(this)">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Upload new images to replace <span class="click-link">(click to browse)</span></p>
+                                <small>Leave empty to keep current images</small>
+                            </div>
+                            <div class="image-previews" id="imagePreviews"></div>
+                        </div>
+
+                        <div class="edit-product-meta">
+                            <div class="meta-item">
+                                <span>Product ID:</span>
+                                <strong><%= product._id.toString().slice(-8).toUpperCase() %></strong>
+                            </div>
+                            <div class="meta-item">
+                                <span>Created:</span>
+                                <strong><%= new Date(product.createdAt).toLocaleDateString('en-IN') %></strong>
+                            </div>
+                            <div class="meta-item">
+                                <span>Last Updated:</span>
+                                <strong><%= new Date(product.updatedAt).toLocaleDateString('en-IN') %></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <form action="/admin/products/<%= product._id %>?_method=DELETE" method="POST"
+                          onsubmit="return confirm('Delete this product permanently?')" class="d-inline">
+                        <button type="submit" class="btn-danger-outline">
+                            <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                    </form>
+                    <div class="form-actions-right">
+                        <a href="/admin/products" class="btn-outline-gold">Cancel</a>
+                        <button type="submit" class="btn-gold">
+                            <i class="fas fa-save"></i> Update Product
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImages(input) {
+    const previews = document.getElementById('imagePreviews');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    previews.innerHTML = '';
+    if (input.files.length > 0) {
+        placeholder.style.display = 'none';
+        Array.from(input.files).forEach((file, i) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `<img src="${e.target.result}" alt="Preview ${i+1}">
+                    ${i === 0 ? '<span class="main-badge">Main</span>' : ''}`;
+                previews.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        placeholder.style.display = 'flex';
+    }
+}
+
+const zone = document.getElementById('imageUploadZone');
+const input = document.getElementById('imageInput');
+zone.addEventListener('click', () => input.click());
+zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    input.files = e.dataTransfer.files;
+    previewImages(input);
+});
+</script>

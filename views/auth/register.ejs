@@ -1,0 +1,89 @@
+<% layout('layout/boilerplate') %>
+
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="auth-visual-content">
+            <i class="fas fa-user-plus auth-big-icon"></i>
+            <h2>Join the Family!</h2>
+            <p>Create your account and start shopping premium bags today.</p>
+            <div class="auth-features">
+                <div><i class="fas fa-check-circle"></i> Free shipping on ₹999+</div>
+                <div><i class="fas fa-check-circle"></i> Exclusive member deals</div>
+                <div><i class="fas fa-check-circle"></i> Easy returns & refunds</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="auth-form-section">
+        <div class="auth-form-wrap">
+            <div class="auth-header">
+                <a href="/" class="auth-logo"><img src="/images/logo.png" alt="Raju Bag House" class="auth-logo-img"></a>
+                <h1>Create Account</h1>
+                <p>Already have an account? <a href="/auth/login" class="auth-link">Sign in</a></p>
+            </div>
+
+            <form action="/auth/register" method="POST" class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="name" name="name" class="form-input" 
+                               placeholder="Your full name" required autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" class="form-input" 
+                               placeholder="your@email.com" required autocomplete="email">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" name="password" class="form-input" 
+                               placeholder="Min. 6 characters" required autocomplete="new-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                            <i class="fas fa-eye" id="toggleIcon-password"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" 
+                               placeholder="Repeat your password" required autocomplete="new-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                            <i class="fas fa-eye" id="toggleIcon-confirmPassword"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-gold btn-full">
+                    <span>Create Account</span>
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    const icon = document.getElementById('toggleIcon-' + id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+</script>

@@ -1,0 +1,107 @@
+<nav class="navbar-main" id="mainNavbar">
+    <div class="nav-container">
+        <!-- Brand (flush left, no margin) -->
+        <a href="/" class="nav-brand">
+            <img src="/images/logo.png" alt="Raju Bag House" class="nav-logo-img">
+            <span class="brand-text">Raju Bag House</span>
+        </a>
+
+        <!-- Search Bar (centered) -->
+        <form class="nav-search-center" action="/products" method="GET">
+            <div class="search-wrap">
+                <i class="fas fa-search search-icon-left"></i>
+                <input type="text" name="search" placeholder="Search for bags, brands, styles..."
+                    class="search-input-center"
+                    value="<%= typeof search !== 'undefined' ? search : '' %>">
+                <button type="submit" class="search-btn-center">Search</button>
+            </div>
+        </form>
+
+        <!-- Nav Links (flush right) -->
+        <div class="nav-links">
+            <a href="/" class="nav-link-item">Home</a>
+            <a href="/products" class="nav-link-item">Shop</a>
+
+            <% if (currentUser) { %>
+                <!-- User Dropdown -->
+                <div class="nav-dropdown">
+                    <button class="nav-avatar-btn">
+                        <div class="avatar-circle"><%= currentUser.name.charAt(0).toUpperCase() %></div>
+                        <span><%= currentUser.name.split(' ')[0] %></span>
+                        <i class="fas fa-chevron-down chevron-icon"></i>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-avatar"><%= currentUser.name.charAt(0).toUpperCase() %></div>
+                            <div>
+                                <div class="dropdown-user-name"><%= currentUser.name %></div>
+                                <div class="dropdown-user-email"><%= currentUser.email %></div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <% if (currentUser.role === 'admin') { %>
+                            <a href="/admin" class="dropdown-item admin-item">
+                                <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        <% } %>
+                        <a href="/orders" class="dropdown-item">
+                            <i class="fas fa-box"></i> My Orders
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form action="/auth/logout" method="POST" class="m-0">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <% } else { %>
+                <a href="/auth/login" class="nav-link-item">Login</a>
+                <a href="/auth/register" class="btn-gold">Sign Up</a>
+            <% } %>
+
+            <!-- Cart (Always visible like Amazon) -->
+            <a href="/cart" class="nav-link-item cart-btn" id="navCartBtn">
+                <i class="fas fa-shopping-cart"></i> <span class="cart-text">Cart</span>
+                <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                    <span class="cart-badge" id="cartBadge"><%= cartCount %></span>
+                <% } else { %>
+                    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+                <% } %>
+            </a>
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <form action="/products" method="GET" class="mobile-search">
+            <i class="fas fa-search"></i>
+            <input type="text" name="search" placeholder="Search bags...">
+            <button type="submit">Go</button>
+        </form>
+        <a href="/" class="mobile-link"><i class="fas fa-home"></i> Home</a>
+        <a href="/products" class="mobile-link"><i class="fas fa-store"></i> Shop</a>
+        <% if (currentUser) { %>
+            <a href="/cart" class="mobile-link">
+                <i class="fas fa-shopping-cart"></i> Cart
+                <% if (cartCount > 0) { %><span class="mobile-cart-badge"><%= cartCount %></span><% } %>
+            </a>
+            <a href="/orders" class="mobile-link"><i class="fas fa-box"></i> My Orders</a>
+            <% if (currentUser.role === 'admin') { %>
+                <a href="/admin" class="mobile-link admin-link"><i class="fas fa-shield-alt"></i> Admin Dashboard</a>
+            <% } %>
+            <form action="/auth/logout" method="POST">
+                <button type="submit" class="mobile-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </form>
+        <% } else { %>
+            <a href="/auth/login" class="mobile-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/auth/register" class="mobile-link"><i class="fas fa-user-plus"></i> Sign Up</a>
+        <% } %>
+    </div>
+</nav>

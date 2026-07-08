@@ -1,0 +1,92 @@
+<% layout('layout/boilerplate') %>
+
+<div class="admin-layout">
+    <%- include('./admin-sidebar') %>
+    
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1><i class="fas fa-boxes"></i> Products</h1>
+            <a href="/admin/products/new" class="btn-gold">
+                <i class="fas fa-plus"></i> Add New Product
+            </a>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <div class="product-count">
+                    <span><%= products.length %> product<%= products.length !== 1 ? 's' : '' %> total</span>
+                </div>
+            </div>
+
+            <% if (products.length === 0) { %>
+                <div class="empty-state-sm">
+                    <i class="fas fa-box-open"></i>
+                    <p>No products yet. <a href="/admin/products/new">Add your first product!</a></p>
+                </div>
+            <% } else { %>
+                <div class="admin-table-wrap">
+                    <table class="admin-table products-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(product => { %>
+                                <tr class="product-row">
+                                    <td>
+                                        <img src="<%= product.images[0] || '/images/bag-placeholder.svg' %>" 
+                                             alt="<%= product.name %>" class="admin-product-img">
+                                    </td>
+                                    <td>
+                                        <div class="admin-product-name"><%= product.name %></div>
+                                        <small class="text-muted"><%= product._id.toString().slice(-8).toUpperCase() %></small>
+                                    </td>
+                                    <td><span class="cat-tag"><%= product.category %></span></td>
+                                    <td>
+                                        <div class="admin-price">₹<%= product.price.toLocaleString('en-IN') %></div>
+                                        <% if (product.originalPrice > product.price) { %>
+                                            <small class="text-muted line-through">₹<%= product.originalPrice.toLocaleString('en-IN') %></small>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <span class="stock-badge <%= product.stock === 0 ? 'stock-zero' : product.stock < 5 ? 'stock-low-badge' : 'stock-ok-badge' %>">
+                                            <%= product.stock %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="<%= product.isFeatured ? 'featured-yes' : 'featured-no' %>">
+                                            <i class="fas fa-<%= product.isFeatured ? 'check' : 'times' %>"></i>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <a href="/products/<%= product._id %>" class="action-btn view-btn" target="_blank" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/admin/products/<%= product._id %>/edit" class="action-btn edit-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form action="/admin/products/<%= product._id %>?_method=DELETE" method="POST"
+                                                  onsubmit="return confirm('Delete this product? This cannot be undone.')">
+                                                <button type="submit" class="action-btn delete-btn" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

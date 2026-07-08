@@ -1,0 +1,204 @@
+<% layout('layout/boilerplate') %>
+
+<!-- Breadcrumb -->
+<div class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a> <i class="fas fa-chevron-right"></i>
+            <a href="/products">Shop</a> <i class="fas fa-chevron-right"></i>
+            <span><%= product.name %></span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- ====== PRODUCT DETAIL ====== -->
+    <div class="product-detail-layout">
+        <!-- Images -->
+        <div class="product-gallery">
+            <div class="main-image-wrap">
+                <img src="<%= product.images[0] || '/images/bag-placeholder.svg' %>" 
+                     alt="<%= product.name %>" class="main-product-img" id="mainImage">
+                <% if (product.discount > 0) { %>
+                    <span class="badge-discount badge-lg">-<%= product.discount %>% OFF</span>
+                <% } %>
+            </div>
+            <% if (product.images.length > 1) { %>
+            <div class="thumbnail-strip">
+                <% product.images.forEach((img, i) => { %>
+                    <img src="<%= img %>" alt="<%= product.name %> view <%= i+1 %>"
+                         class="thumb-img <%= i === 0 ? 'active' : '' %>"
+                         onclick="changeImage('<%= img %>', this)">
+                <% }) %>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Info -->
+        <div class="product-detail-info">
+            <div class="product-detail-category"><%= product.category %></div>
+            <h1 class="product-detail-name"><%= product.name %></h1>
+            
+            <div class="product-detail-rating">
+                <% for(let s=1; s<=5; s++) { %>
+                    <i class="fas fa-star <%= s <= Math.round(product.ratings.average) ? 'star-active' : 'star-empty' %>"></i>
+                <% } %>
+                <span><%= product.ratings.average.toFixed(1) %> (<%= product.ratings.count %> reviews)</span>
+            </div>
+
+            <div class="product-detail-price">
+                <span class="detail-price-current">₹<%= product.price.toLocaleString('en-IN') %></span>
+                <% if (product.originalPrice > product.price) { %>
+                    <span class="detail-price-original">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+                    <span class="detail-price-save">You save ₹<%= (product.originalPrice - product.price).toLocaleString('en-IN') %></span>
+                <% } %>
+            </div>
+
+            <div class="detail-divider"></div>
+
+            <p class="product-detail-desc"><%= product.description %></p>
+
+            <!-- Colors -->
+            <% if (product.colors && product.colors.length > 0) { %>
+            <div class="detail-option">
+                <label class="detail-option-label">Color: <strong id="selectedColor"><%= product.colors[0] %></strong></label>
+                <div class="color-options">
+                    <% product.colors.forEach((color, i) => { %>
+                        <button type="button" class="color-btn <%= i === 0 ? 'active' : '' %>" 
+                                style="background: <%= color.toLowerCase() %>" 
+                                title="<%= color %>"
+                                onclick="selectColor(this, '<%= color %>')">
+                        </button>
+                    <% }) %>
+                </div>
+            </div>
+            <% } %>
+
+            <!-- Sizes -->
+            <% if (product.sizes && product.sizes.length > 0) { %>
+            <div class="detail-option">
+                <label class="detail-option-label">Size: <strong id="selectedSize"><%= product.sizes[0] %></strong></label>
+                <div class="size-options">
+                    <% product.sizes.forEach((size, i) => { %>
+                        <button type="button" class="size-btn <%= i === 0 ? 'active' : '' %>"
+                                onclick="selectSize(this, '<%= size %>')">
+                            <%= size %>
+                        </button>
+                    <% }) %>
+                </div>
+            </div>
+            <% } %>
+
+            <!-- Stock Info -->
+            <div class="detail-stock">
+                <% if (product.stock === 0) { %>
+                    <span class="stock-out"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                <% } else if (product.stock < 5) { %>
+                    <span class="stock-low"><i class="fas fa-exclamation-circle"></i> Only <%= product.stock %> left!</span>
+                <% } else { %>
+                    <span class="stock-ok"><i class="fas fa-check-circle"></i> In Stock (<%= product.stock %> available)</span>
+                <% } %>
+            </div>
+
+            <!-- Add to Cart -->
+            <% if (product.stock > 0) { %>
+                <% if (currentUser) { %>
+                    <form action="/cart/<%= product._id %>" method="POST" class="add-to-cart-form">
+                        <div class="quantity-wrap">
+                            <label>Qty:</label>
+                            <div class="qty-control">
+                                <button type="button" onclick="adjustQty(-1)">−</button>
+                                <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="<%= product.stock %>">
+                                <button type="button" onclick="adjustQty(1)">+</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-gold btn-cart">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                    <form action="/cart/wishlist/<%= product._id %>" method="POST">
+                        <button type="submit" class="btn-wishlist">
+                            <% const inWish = currentUser && currentUser.wishlist && currentUser.wishlist.some(id => id.toString() === product._id.toString()); %>
+                            <i class="<%= inWish ? 'fas' : 'far' %> fa-heart"></i>
+                            <%= inWish ? 'Remove from Wishlist' : 'Add to Wishlist' %>
+                        </button>
+                    </form>
+                <% } else { %>
+                    <a href="/auth/login" class="btn-gold btn-cart">
+                        <i class="fas fa-sign-in-alt"></i> Login to Buy
+                    </a>
+                <% } %>
+            <% } else { %>
+                <button disabled class="btn-disabled btn-cart">Out of Stock</button>
+            <% } %>
+
+            <!-- Product Meta -->
+            <div class="product-meta">
+                <% if (product.brand) { %><div><i class="fas fa-tag"></i> Brand: <strong><%= product.brand %></strong></div><% } %>
+                <% if (product.material) { %><div><i class="fas fa-layer-group"></i> Material: <strong><%= product.material %></strong></div><% } %>
+                <div><i class="fas fa-hashtag"></i> SKU: <strong><%= product._id.toString().slice(-8).toUpperCase() %></strong></div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+                <div class="trust-badge"><i class="fas fa-truck"></i><span>Free shipping ₹999+</span></div>
+                <div class="trust-badge"><i class="fas fa-shield-alt"></i><span>100% Genuine</span></div>
+                <div class="trust-badge"><i class="fas fa-undo"></i><span>Easy Returns</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== RELATED PRODUCTS ====== -->
+    <% if (related && related.length > 0) { %>
+    <div class="related-section">
+        <h2 class="related-title">You May Also Like</h2>
+        <div class="products-grid">
+            <% related.forEach((p, i) => { %>
+                <div class="product-card animate-fade-in-up" style="animation-delay:<%= i*0.08 %>s">
+                    <div class="product-img-wrap">
+                        <a href="/products/<%= p._id %>">
+                            <img src="<%= p.images[0] || '/images/bag-placeholder.svg' %>" alt="<%= p.name %>" class="product-img">
+                        </a>
+                        <div class="product-overlay">
+                            <a href="/products/<%= p._id %>" class="overlay-btn"><i class="fas fa-eye"></i> View</a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name"><a href="/products/<%= p._id %>"><%= p.name %></a></h3>
+                        <div class="product-price">
+                            <span class="price-current">₹<%= p.price.toLocaleString('en-IN') %></span>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<script>
+function changeImage(src, el) {
+    document.getElementById('mainImage').src = src;
+    document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function adjustQty(delta) {
+    const input = document.getElementById('qtyInput');
+    let val = parseInt(input.value) + delta;
+    val = Math.max(1, Math.min(val, parseInt(input.max)));
+    input.value = val;
+}
+
+function selectColor(btn, color) {
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('selectedColor').textContent = color;
+}
+
+function selectSize(btn, size) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('selectedSize').textContent = size;
+}
+</script>
