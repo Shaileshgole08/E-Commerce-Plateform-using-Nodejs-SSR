@@ -7,56 +7,40 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 
-// --- Routes ---
 const authRoutes = require('./Routes/auth');
 const productRoutes = require('./Routes/products');
 const cartRoutes = require('./Routes/cart');
 const orderRoutes = require('./Routes/orders');
 const adminRoutes = require('./Routes/admin');
 
-// --- Models ---
 const User = require('./models/User');
 const Product = require('./models/Product');
 
-// =====================
-//  DATABASE CONNECTION
-// =====================
 mongoose.connect('mongodb://localhost:27017/rajubaghouse')
     .then(() => console.log('✅ MongoDB connected to rajubaghouse'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// =====================
-//  VIEW ENGINE
-// =====================
 app.engine('ejs', ejsmate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// =====================
-//  MIDDLEWARE
-// =====================
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 
-// Session
 app.use(session({
     secret: 'rajubaghouse_secret_key_2024',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000
     }
 }));
 
-// Flash
 app.use(flash());
 
-// =====================
-//  GLOBAL LOCALS
-// =====================
 app.use(async (req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
@@ -68,23 +52,17 @@ app.use(async (req, res, next) => {
             const user = await User.findById(req.session.userId).select('name email role cart wishlist');
             res.locals.currentUser = user;
             res.locals.cartCount = user ? user.cart.length : 0;
-        } catch (e) {
-            // session invalid
-        }
+        } catch (e) {}
     }
     next();
 });
 
-// =====================
-//  ROUTES
-// =====================
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
 app.use('/admin', adminRoutes);
 
-// Home route
 app.get('/', async (req, res) => {
     try {
         const featured = await Product.find({ isFeatured: true }).limit(8);
@@ -97,9 +75,6 @@ app.get('/', async (req, res) => {
     }
 });
 
-// =====================
-//  SEED ADMIN USER
-// =====================
 async function seedAdmin() {
     try {
         const existing = await User.findOne({ email: 'shailesh@admin.com' });
@@ -120,16 +95,10 @@ async function seedAdmin() {
 
 mongoose.connection.once('open', seedAdmin);
 
-// =====================
-//  404 HANDLER
-// =====================
 app.use((req, res) => {
     res.status(404).render('404', { title: 'Page Not Found — Raju Bag House' });
 });
 
-// =====================
-//  ERROR HANDLER
-// =====================
 app.use((err, req, res, next) => {
     console.error('Error:', err.message);
     if (req.flash) req.flash('error', err.message || 'Something went wrong!');
@@ -137,9 +106,6 @@ app.use((err, req, res, next) => {
     res.redirect(referer);
 });
 
-// =====================
-//  START SERVER
-// =====================
 app.listen(3000, () => {
     console.log('🚀 Raju Bag House running at http://localhost:3000/');
 });

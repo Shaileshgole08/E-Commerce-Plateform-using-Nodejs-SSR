@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 
-// GET /products — catalog with search, filter, sort
 router.get('/', async (req, res) => {
     try {
         const { search, category, sort, minPrice, maxPrice } = req.query;
@@ -52,7 +51,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /products/:id — product detail
 router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -61,7 +59,6 @@ router.get('/:id', async (req, res) => {
             return res.redirect('/products');
         }
 
-        // Related products (same category, exclude current)
         const related = await Product.find({
             category: product.category,
             _id: { $ne: product._id }

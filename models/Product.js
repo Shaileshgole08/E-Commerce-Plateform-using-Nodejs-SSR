@@ -46,7 +46,6 @@ const productSchema = new mongoose.Schema({
     tags: [{ type: String }]
 }, { timestamps: true });
 
-// Discount percentage virtual
 productSchema.virtual('discount').get(function () {
     if (this.originalPrice && this.originalPrice > this.price) {
         return Math.round(((this.originalPrice - this.price) / this.originalPrice) * 100);

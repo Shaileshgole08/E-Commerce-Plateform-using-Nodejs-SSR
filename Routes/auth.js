@@ -2,13 +2,11 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// GET /auth/login
 router.get('/login', (req, res) => {
     if (req.session.userId) return res.redirect('/');
     res.render('auth/login', { title: 'Login — Raju Bag House' });
 });
 
-// POST /auth/login
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -46,13 +44,11 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// GET /auth/register
 router.get('/register', (req, res) => {
     if (req.session.userId) return res.redirect('/');
     res.render('auth/register', { title: 'Register — Raju Bag House' });
 });
 
-// POST /auth/register
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password, confirmPassword } = req.body;
@@ -94,7 +90,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// POST /auth/logout
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) console.error(err);

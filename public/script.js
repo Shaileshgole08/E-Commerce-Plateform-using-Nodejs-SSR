@@ -1,8 +1,3 @@
-/* =============================================
-   RAJU BAG HOUSE — Main JavaScript
-   ============================================= */
-
-// ====== NAVBAR: Scroll effect ======
 const navbar = document.getElementById('mainNavbar');
 if (navbar) {
   window.addEventListener('scroll', () => {
@@ -11,7 +6,6 @@ if (navbar) {
   });
 }
 
-// ====== HAMBURGER MENU ======
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 if (hamburgerBtn && mobileMenu) {
@@ -19,7 +13,6 @@ if (hamburgerBtn && mobileMenu) {
     hamburgerBtn.classList.toggle('open');
     mobileMenu.classList.toggle('open');
   });
-  // Close on outside click
   document.addEventListener('click', (e) => {
     if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
       hamburgerBtn.classList.remove('open');
@@ -28,7 +21,6 @@ if (hamburgerBtn && mobileMenu) {
   });
 }
 
-// ====== FLASH MESSAGES: Auto-dismiss ======
 document.querySelectorAll('.flash-close').forEach(btn => {
   btn.addEventListener('click', () => {
     const flash = btn.closest('.flash');
@@ -36,7 +28,6 @@ document.querySelectorAll('.flash-close').forEach(btn => {
     setTimeout(() => flash.remove(), 300);
   });
 });
-// Auto-dismiss after 5s
 setTimeout(() => {
   document.querySelectorAll('.flash').forEach(flash => {
     flash.style.opacity = '0';
@@ -46,7 +37,6 @@ setTimeout(() => {
   });
 }, 5000);
 
-// ====== INTERSECTION OBSERVER: Animate on scroll ======
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -61,7 +51,6 @@ document.querySelectorAll('.animate-fade-in-up').forEach(el => {
   observer.observe(el);
 });
 
-// ====== HERO PARTICLES ======
 const particlesContainer = document.getElementById('particles');
 if (particlesContainer) {
   const count = 25;
@@ -81,7 +70,6 @@ if (particlesContainer) {
   }
 }
 
-// ====== SMOOTH scroll for anchor links ======
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
@@ -90,7 +78,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// ====== PRODUCT IMAGE: Lazy load animation ======
 document.querySelectorAll('.product-img, .cart-item-img, .order-item-img').forEach(img => {
   img.addEventListener('load', () => {
     img.style.opacity = '1';
@@ -100,13 +87,11 @@ document.querySelectorAll('.product-img, .cart-item-img, .order-item-img').forEa
   img.style.transition = 'opacity 0.4s ease';
 });
 
-// ====== ADMIN TABLE: Row highlight ======
 document.querySelectorAll('.admin-table tbody tr').forEach(row => {
   row.addEventListener('mouseenter', () => row.style.background = 'rgba(201,168,76,0.03)');
   row.addEventListener('mouseleave', () => row.style.background = '');
 });
 
-// ====== FORM VALIDATION: Highlight empty required fields ======
 document.querySelectorAll('form').forEach(form => {
   form.addEventListener('submit', function (e) {
     const requiredFields = form.querySelectorAll('[required]');
@@ -124,14 +109,12 @@ document.querySelectorAll('form').forEach(form => {
     });
     if (!valid) {
       e.preventDefault();
-      // Show error on first invalid field
       const firstInvalid = form.querySelector('[required]:invalid, [required][style*="danger"]');
       if (firstInvalid) firstInvalid.focus();
     }
   });
 });
 
-// ====== PRODUCT CARD: Add to cart button feedback ======
 document.querySelectorAll('.overlay-form').forEach(form => {
   form.addEventListener('submit', function () {
     const btn = form.querySelector('.overlay-btn');
@@ -143,7 +126,6 @@ document.querySelectorAll('.overlay-form').forEach(form => {
   });
 });
 
-// ====== BACK TO TOP button ======
 const backToTopBtn = document.createElement('button');
 backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
 backToTopBtn.id = 'backToTop';
@@ -176,7 +158,6 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// ====== CATEGORY CARDS: Counter animation ======
 function animateCounter(el, target, duration = 1500) {
   let start = 0;
   const step = target / (duration / 16);

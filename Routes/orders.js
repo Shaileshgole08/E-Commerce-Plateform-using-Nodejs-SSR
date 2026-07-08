@@ -4,7 +4,6 @@ const User = require('../models/User');
 const Order = require('../models/Order');
 const { isLoggedIn } = require('../middleware/auth');
 
-// GET /orders/checkout
 router.get('/checkout', isLoggedIn, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).populate('cart.product');
@@ -34,7 +33,6 @@ router.get('/checkout', isLoggedIn, async (req, res) => {
     }
 });
 
-// POST /orders/checkout — Place order
 router.post('/checkout', isLoggedIn, async (req, res) => {
     try {
         const { name, street, city, state, pincode, phone, paymentMethod } = req.body;
@@ -74,7 +72,6 @@ router.post('/checkout', isLoggedIn, async (req, res) => {
 
         await order.save();
 
-        // Save address for future
         user.address = { street, city, state, pincode, phone };
         user.cart = [];
         await user.save();
@@ -88,7 +85,6 @@ router.post('/checkout', isLoggedIn, async (req, res) => {
     }
 });
 
-// GET /orders — Order history
 router.get('/', isLoggedIn, async (req, res) => {
     try {
         const orders = await Order.find({ user: req.session.userId })
@@ -106,7 +102,6 @@ router.get('/', isLoggedIn, async (req, res) => {
     }
 });
 
-// POST /orders/buy-now/:id — Buy single product instantly
 router.post('/buy-now/:id', isLoggedIn, async (req, res) => {
     try {
         const Product = require('../models/Product');
@@ -116,7 +111,6 @@ router.post('/buy-now/:id', isLoggedIn, async (req, res) => {
             return res.redirect('/products');
         }
         const user = await User.findById(req.session.userId);
-        // Set cart to just this one product
         const existing = user.cart.find(c => c.product.toString() === req.params.id);
         if (existing) {
             existing.quantity = 1;

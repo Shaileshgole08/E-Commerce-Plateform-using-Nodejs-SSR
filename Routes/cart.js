@@ -4,11 +4,10 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const { isLoggedIn } = require('../middleware/auth');
 
-// GET /cart
 router.get('/', isLoggedIn, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).populate('cart.product');
-        const cartItems = user.cart.filter(item => item.product); // Remove null products
+        const cartItems = user.cart.filter(item => item.product);
         const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
         const shipping = subtotal > 999 ? 0 : 99;
         const total = subtotal + shipping;
@@ -27,7 +26,6 @@ router.get('/', isLoggedIn, async (req, res) => {
     }
 });
 
-// POST /cart/:id — Add to cart
 router.post('/:id', isLoggedIn, async (req, res) => {
     try {
         const productId = req.params.id;
@@ -63,7 +61,6 @@ router.post('/:id', isLoggedIn, async (req, res) => {
     }
 });
 
-// PATCH /cart/:id — Update quantity
 router.patch('/:id', isLoggedIn, async (req, res) => {
     try {
         const { quantity } = req.body;
@@ -83,7 +80,6 @@ router.patch('/:id', isLoggedIn, async (req, res) => {
     }
 });
 
-// DELETE /cart/:id — Remove from cart
 router.delete('/:id', isLoggedIn, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
@@ -98,7 +94,6 @@ router.delete('/:id', isLoggedIn, async (req, res) => {
     }
 });
 
-// POST /cart/wishlist/:id — Toggle wishlist
 router.post('/wishlist/:id', isLoggedIn, async (req, res) => {
     try {
         const productId = req.params.id;

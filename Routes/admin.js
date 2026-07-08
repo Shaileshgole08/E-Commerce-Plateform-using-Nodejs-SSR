@@ -8,7 +8,6 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const { isLoggedIn, isAdmin } = require('../middleware/auth');
 
-// Multer setup for image uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadPath = path.join(__dirname, '../public/images/products');
@@ -23,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const allowed = /jpeg|jpg|png|gif|webp/;
         const ext = allowed.test(path.extname(file.originalname).toLowerCase());
@@ -33,7 +32,6 @@ const upload = multer({
     }
 });
 
-// GET /admin — Dashboard
 router.get('/', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const [totalProducts, totalOrders, totalUsers, orders] = await Promise.all([
@@ -64,7 +62,6 @@ router.get('/', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-// GET /admin/products
 router.get('/products', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
@@ -79,7 +76,6 @@ router.get('/products', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-// GET /admin/products/new
 router.get('/products/new', isLoggedIn, isAdmin, (req, res) => {
     const categories = ['Handbags', 'Backpacks', 'Clutches', 'Tote Bags', 'Shoulder Bags', 'Travel Bags', 'Wallets', 'Other'];
     res.render('admin/newProduct', {
@@ -88,7 +84,6 @@ router.get('/products/new', isLoggedIn, isAdmin, (req, res) => {
     });
 });
 
-// POST /admin/products — Create product
 router.post('/products', isLoggedIn, isAdmin, upload.array('images', 5), async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, stock, material, brand, colors, sizes, tags, isFeatured } = req.body;
@@ -123,7 +118,6 @@ router.post('/products', isLoggedIn, isAdmin, upload.array('images', 5), async (
     }
 });
 
-// GET /admin/products/:id/edit
 router.get('/products/:id/edit', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -144,7 +138,6 @@ router.get('/products/:id/edit', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-// PUT /admin/products/:id — Update product
 router.put('/products/:id', isLoggedIn, isAdmin, upload.array('images', 5), async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, stock, material, brand, colors, sizes, tags, isFeatured, keepImages } = req.body;
@@ -184,7 +177,6 @@ router.put('/products/:id', isLoggedIn, isAdmin, upload.array('images', 5), asyn
     }
 });
 
-// DELETE /admin/products/:id — Delete product
 router.delete('/products/:id', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
@@ -201,7 +193,6 @@ router.delete('/products/:id', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-// GET /admin/orders
 router.get('/orders', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const orders = await Order.find()
@@ -218,7 +209,6 @@ router.get('/orders', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-// PATCH /admin/orders/:id/status — Update order status
 router.patch('/orders/:id/status', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const { status } = req.body;

@@ -42,7 +42,6 @@ const orderSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Auto-generate order number
 orderSchema.pre('save', function () {
     if (!this.orderNumber) {
         this.orderNumber = 'RBH-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
